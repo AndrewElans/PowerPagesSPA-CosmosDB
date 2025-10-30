@@ -1,3 +1,5 @@
+This is a part of the **Power Pages SPA series** from main repo [github.com/AndrewElans/PowerPagesSPA](https://github.com/AndrewElans/PowerPagesSPA) 
+
 # Power Pages SPA with Azure Cosmos DB
 
 Query Azure Cosmos DB with MSAL token from browser.
