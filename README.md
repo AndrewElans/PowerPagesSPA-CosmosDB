@@ -239,4 +239,36 @@ Response:
 true # if -PassThru is set or nothing
 ```
 
+### Query Cosmos DB with `fetch` from your portal
+
+[Microsoft Authentication Library for JavaScript (MSAL.js) for Browser-Based Single-Page Applications](https://github.com/AzureAD/microsoft-authentication-library-for-js/tree/dev/lib/msal-browser) is used for authenticating with the Azure tenant and getting access tokens.
+
+A chain of functions (piping) is used to get a token for a resource. 
+
+Source code will be provided later.
+
+#### Get token
+
+##### Get URI for your Cosmos DB 
+Go to portal.azure.com -> test-cosmos-db resource -> Overview -> URI -> https://test-cosmos-db.documents.azure.com:443/
+##### MSAL token scope for your Cosmos DB
+Remove port from the URI and add user_impersonation => `https://test-cosmos-db.documents.azure.com/user_impersonation`
+
+Requesting token with MSAL methods like `acquireTokenSilent`, `acquireTokenPopup` or `acquireTokenRedirect` will give the following response: 
+```json
+{
+    "token_type": "Bearer",
+    "scope": "https://test-cosmos-db.documents.azure.com/user_impersonation",
+    "expires_in": 4684,
+    "ext_expires_in": 4684,
+    "access_token": "eyJ0eXAiOiJKV1...DYL4VxOhiTQ",
+    "refresh_token": "1.AUEBa_qS...rkh56Ln5FC2C9I",
+    "refresh_token_expires_in": 79933,
+    "id_token": "eyJ0eXAiOiJKV1Qi...oKE_UPehkAkuw",
+    "client_info": "eyJ1aWQiOiI...3RkYnIiOiJFVSJ9"
+}
+```
+
+#### Query Cosmos DB API
+
 
