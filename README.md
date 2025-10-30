@@ -249,7 +249,7 @@ true # if -PassThru is set or nothing
 
 A chain of functions (piping) is used to get a token for a resource. 
 
-Source code will be provided later.
+See here how to [set up MSAL Browser](https://github.com/AndrewElans/PowerPagesSPA-MSAL-Browser) _repo in progress..._
 
 #### Get token
 
