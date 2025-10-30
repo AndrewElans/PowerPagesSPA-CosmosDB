@@ -2,7 +2,7 @@ This is a part of the **Power Pages SPA series** from main repo [github.com/Andr
 
 # Power Pages SPA with Azure Cosmos DB
 
-Query Azure Cosmos DB with MSAL token from browser.
+You can securely query Azure Cosmos DB with MSAL token obtained in a browser. Then token sent to Azure Cosmos DB will be verified and access either allowed or not. Azure Cosmos DB allows to set up granular control with RBAC to databases or documents. It could be a fast and convenient Datavers alternative when it comes to getting or sending large arrays of data.
 
 ## In portal.azure.com
 ### Provision Azure Cosmos DB
