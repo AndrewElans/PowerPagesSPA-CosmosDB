@@ -287,7 +287,7 @@ fetch(
     {
         headers: new Headers({
             Authorization: encodeURIComponent(
-                `type=aad&ver=1.0&sig=${accessTokenMSAL}`
+                `type=aad&ver=1.0&sig=${access_token}`
             ),
             'x-ms-date': new Date().toUTCString(),
             'x-ms-version': '2018-12-31',
@@ -327,7 +327,7 @@ fetch(
         method: 'POST',
         headers: new Headers({
           Authorization: encodeURIComponent(
-            `type=aad&ver=1.0&sig=${accessTokenMSAL}`
+            `type=aad&ver=1.0&sig=${access_token}`
           ),
           'x-ms-date': new Date().toUTCString(),
           'x-ms-version': '2018-12-31',
@@ -373,7 +373,7 @@ fetch(
         method: 'POST',
         headers: new Headers({
           Authorization: encodeURIComponent(
-            `type=aad&ver=1.0&sig=${accessTokenMSAL}`
+            `type=aad&ver=1.0&sig=${access_token}`
           ),
           'x-ms-date': new Date().toUTCString(),
           'x-ms-version': '2018-12-31',
