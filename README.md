@@ -250,7 +250,7 @@ Source code will be provided later.
 #### Get token
 
 ##### Get URI for your Cosmos DB 
-Go to portal.azure.com -> test-cosmos-db resource -> Overview -> URI -> https://test-cosmos-db.documents.azure.com:443/
+Go to portal.azure.com -> test-cosmos-db resource -> Overview -> URI -> <https>://test-cosmos-db.documents.azure.com:443/
 ##### MSAL token scope for your Cosmos DB
 Remove port from the URI and add user_impersonation => `https://test-cosmos-db.documents.azure.com/user_impersonation`
 
@@ -258,7 +258,7 @@ Requesting token with MSAL methods like `acquireTokenSilent`, `acquireTokenPopup
 ```json
 {
     "token_type": "Bearer",
-    "scope": "https://test-cosmos-db.documents.azure.com/user_impersonation",
+    "scope": "<https>://test-cosmos-db.documents.azure.com/user_impersonation",
     "expires_in": 4684,
     "ext_expires_in": 4684,
     "access_token": "eyJ0eXAiOiJKV1...DYL4VxOhiTQ",
@@ -270,5 +270,143 @@ Requesting token with MSAL methods like `acquireTokenSilent`, `acquireTokenPopup
 ```
 
 #### Query Cosmos DB API
+
+Azure Cosmos DB REST API Reference [learn.microsoft.com/en-us/rest/api/cosmos-db](https://learn.microsoft.com/en-us/rest/api/cosmos-db/)
+Request Headers [learn.microsoft.com/en-us/rest/api/cosmos-db/common-cosmosdb-rest-request-headers](https://learn.microsoft.com/en-us/rest/api/cosmos-db/common-cosmosdb-rest-request-headers)
+
+##### Get a Collection
+
+Reference [learn.microsoft.com/en-us/rest/api/cosmos-db/get-a-collection](https://learn.microsoft.com/en-us/rest/api/cosmos-db/get-a-collection)
+
+Request:
+```javascript
+fetch(
+    'https://test-cosmos-db.documents.azure.com/dbs/TestDB/colls/TestContainer/docs',
+    {
+        headers: new Headers({
+            Authorization: encodeURIComponent(
+                `type=aad&ver=1.0&sig=${accessTokenMSAL}`
+            ),
+            'x-ms-date': new Date().toUTCString(),
+            'x-ms-version': '2018-12-31',
+        }),
+    }
+)
+```
+
+Response: 
+```json
+{
+    "_rid": "MutdAITczYs=",
+    "Documents": [
+        {
+            "id": "02",
+            "partitionKey": "key02",
+            "_rid": "MutdAITczYsCAAAAAAAAAA==",
+            "_self": "dbs/MutdAA==/colls/MutdAITczYs=/docs/MutdAITczYsCAAAAAAAAAA==/",
+            "_etag": "\"b500d7d3-0000-0d00-0000-690205270000\"",
+            "_attachments": "attachments/",
+            "_ts": 1761740071
+        }
+    ],
+    "_count": 1
+}
+```
+
+##### Send SQL Query
+
+Reference [learn.microsoft.com/en-us/rest/api/cosmos-db/querying-cosmosdb-resources-using-the-rest-api](https://learn.microsoft.com/en-us/rest/api/cosmos-db/querying-cosmosdb-resources-using-the-rest-api)
+
+Request:
+```javascript
+fetch(
+    'https://test-cosmos-db.documents.azure.com/dbs/TestDB/colls/TestContainer/docs',
+    {
+        method: 'POST',
+        headers: new Headers({
+          Authorization: encodeURIComponent(
+            `type=aad&ver=1.0&sig=${accessTokenMSAL}`
+          ),
+          'x-ms-date': new Date().toUTCString(),
+          'x-ms-version': '2018-12-31',
+          'Content-Type': 'application/query+json',
+          'x-ms-documentdb-isquery': true,
+          'x-ms-documentdb-query-enablecrosspartition': true
+        }),
+        body: JSON.stringify({query: 'SELECT * FROM TestContainer'})
+    }
+)
+```
+
+Response: 
+```json
+{
+    {
+        "_rid": "MutdAITczYs=",
+        "Documents": [
+            {
+                "id": "02",
+                "partitionKey": "key02",
+                "_rid": "MutdAITczYsCAAAAAAAAAA==",
+                "_self": "dbs/MutdAA==/colls/MutdAITczYs=/docs/MutdAITczYsCAAAAAAAAAA==/",
+                "_etag": "\"b500d7d3-0000-0d00-0000-690205270000\"",
+                "_attachments": "attachments/",
+                "_ts": 1761740071
+            }
+        ],
+        "_count": 1
+    }
+}
+```
+
+##### Create a Document
+
+Reference [learn.microsoft.com/en-us/rest/api/cosmos-db/create-a-document](https://learn.microsoft.com/en-us/rest/api/cosmos-db/create-a-document)
+
+Request:
+```javascript
+fetch(
+    'https://test-cosmos-db.documents.azure.com/dbs/TestDB/colls/TestContainer/docs',
+    {
+        method: 'POST',
+        headers: new Headers({
+          Authorization: encodeURIComponent(
+            `type=aad&ver=1.0&sig=${accessTokenMSAL}`
+          ),
+          'x-ms-date': new Date().toUTCString(),
+          'x-ms-version': '2018-12-31',
+          'x-ms-documentdb-partitionkey': '["keyFromPortals"]'
+        }),
+        body: JSON.stringify({
+            id: `${Date.now()}`,
+            partitionKey: 'keyFromPortals',
+            someOtherData: 'here'
+        })
+    }
+)
+```
+
+Response: 
+```json
+{
+    "id": "1761841215641",
+    "partitionKey": "keyFromPortals",
+    "someOtherData": "here",
+    "_rid": "MutdAITczYsIAAAAAAAAAA==",
+    "_self": "dbs/MutdAA==/colls/MutdAITczYs=/docs/MutdAITczYsIAAAAAAAAAA==/",
+    "_etag": "\"91015851-0000-0d00-0000-690390400000\"",
+    "_attachments": "attachments/",
+    "_ts": 1761841216
+}
+```
+
+
+
+
+
+
+
+
+
 
 
