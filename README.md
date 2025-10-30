@@ -55,6 +55,130 @@ TBA
 
 I follow this guide [learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-connect-role-based-access-control](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-connect-role-based-access-control?pivots=azure-powershell#grant-data-plane-role-based-access).
 
+#### 1. Get list of all role definitions associated with your Azure Cosmos DB account
 
+Run:
+```powershell
+Get-AzCosmosDBSqlRoleDefinition `
+  -ResourceGroupName rg-dev-001 `
+  -AccountName test-cosmos-db
+```
+Response: 
+```powershell
+Id                         : /subscriptions/c15ff08c-5669-485a-ae22-300c2f5920ec/resourceGroups/rg-dev-001/providers/Microsoft.DocumentDB/databaseAccounts/test-cosmos-db/sqlRoleDefinitions/00000000-0000-0000-0000-000000000001
+RoleName                   : Cosmos DB Built-in Data Reader
+Type                       : BuiltInRole
+AssignableScopes           : {/subscriptions/c15ff08c-5669-485a-ae22-300c2f5920ec/resourceGroups/rg-dev-001/providers/Microsoft.DocumentDB/databaseAccounts/test-cosmos-db}
+Permissions.DataActions    : {Microsoft.DocumentDB/databaseAccounts/readMetadata, Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/executeQuery, Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/readChangeFeed,      
+                            Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/items/read}
+Permissions.NotDataActions :
+
+Id                         : /subscriptions/c15ff08c-5669-485a-ae22-300c2f5920ec/resourceGroups/rg-dev-001/providers/Microsoft.DocumentDB/databaseAccounts/test-cosmos-db/sqlRoleDefinitions/00000000-0000-0000-0000-000000000002
+RoleName                   : Cosmos DB Built-in Data Contributor
+Type                       : BuiltInRole
+AssignableScopes           : {/subscriptions/c15ff08c-5669-485a-ae22-300c2f5920ec/resourceGroups/rg-dev-001/providers/Microsoft.DocumentDB/databaseAccounts/test-cosmos-db}
+Permissions.DataActions    : {Microsoft.DocumentDB/databaseAccounts/readMetadata, Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/*, Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/items/*}
+Permissions.NotDataActions :
+```
+
+We can assign these 2 BuildInRoles, but with custom roles we can limit the scope to specific databases/containers. Let's do this.
+
+#### 2. Create a new custom role definition for Reader
+
+Run:
+```powershell
+New-AzCosmosDBSqlRoleDefinition `
+    -AccountName test-cosmos-db `
+    -ResourceGroupName rg-dev-001 `
+    -Type CustomRole `
+    -RoleName "Read TestDB/TestContainer" `
+    -DataAction (
+        "Microsoft.DocumentDB/databaseAccounts/readMetadata", 
+        "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/executeQuery", 
+        "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/readChangeFeed", 
+        "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/items/read"
+    ) `
+    -AssignableScope "/dbs/TestDB/colls/TestContainer" # we limit the scope to the created database/container
+```
+Response: 
+```powershell
+Id                         : /subscriptions/c15ff08c-5669-485a-ae22-300c2f5920ec/resourceGroups/rg-dev-001/providers/Microsoft.DocumentDB/databaseAccounts/test-cosmos-db/sqlRoleDefinitions/6aa1c516-89e6-42db-a92a-9efbd692fbfc
+RoleName                   : Read TestDB/TestContainer
+Type                       : CustomRole
+AssignableScopes           : {/subscriptions/c15ff08c-5669-485a-ae22-300c2f5920ec/resourceGroups/rg-dev-001/providers/Microsoft.DocumentDB/databaseAccounts/test-cosmos-db/dbs/TestDB/colls/TestContainer}
+Permissions.DataActions    : {Microsoft.DocumentDB/databaseAccounts/readMetadata, Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/executeQuery, Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/readChangeFeed, Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/items/read}
+Permissions.NotDataActions :
+```
+
+#### 3. Create a new custom role definition for Writer
+
+Run:
+```powershell
+New-AzCosmosDBSqlRoleDefinition `
+    -AccountName test-cosmos-db `
+    -ResourceGroupName rg-dev-001 `
+    -Type CustomRole `
+    -RoleName "Write TestDB/TestContainer" `
+    -DataAction (
+        "Microsoft.DocumentDB/databaseAccounts/readMetadata", 
+        "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/*", 
+        "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/items/*"
+    ) `
+    -AssignableScope "/dbs/TestDB/colls/TestContainer"
+```
+Response: 
+```powershell
+Id                         : /subscriptions/c15ff08c-5669-485a-ae22-300c2f5920ec/resourceGroups/rg-dev-001/providers/Microsoft.DocumentDB/databaseAccounts/test-cosmos-db/sqlRoleDefinitions/667aef15-cfd8-4c28-ab31-e9bf39cee554
+RoleName                   : Write TestDb/TestContainer
+Type                       : CustomRole
+AssignableScopes           : {/subscriptions/c15ff08c-5669-485a-ae22-300c2f5920ec/resourceGroups/rg-dev-001/providers/Microsoft.DocumentDB/databaseAccounts/test-cosmos-db/dbs/TestDB/colls/TestContainer}
+Permissions.DataActions    : {Microsoft.DocumentDB/databaseAccounts/readMetadata, Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/*,Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/items/*}
+Permissions.NotDataActions :
+```
+
+#### 4. Get ID of your current Cosmos DB account
+
+Two options here:
+
+##### Option 1
+Run:
+```powershell
+Get-AzCosmosDBAccount `
+  -ResourceGroupName rg-dev-001 `
+  -Name test-cosmos-db `
+  | Select -Property Id # this line is optional and limits output only to id 
+```
+Response: 
+```powershell
+/subscriptions/c15ff08c-5669-485a-ae22-300c2f5920ec/resourceGroups/rg-dev-001/providers/Microsoft.DocumentDB/databaseAccounts/test-cosmos-db
+```
+##### Option 2
+
+The same can be taken from the url bar when you are in the portal.azure.com -> your Azure Cosmos DB resource.
+
+#### 5. Assign roles to a user or group
+
+I will assign a role to Azure Security Group of my team. This group has id 0a726c36-7f85-4281-9b46-279b1e9eb331
+
+Run:
+```powershell
+New-AzCosmosDBSqlRoleAssignment `
+  -AccountName test-cosmos-db `
+  -ResourceGroupName rg-dev-001 `
+  -RoleDefinitionName "Read TestDB/TestContainer" <# or instead use -RoleDefinitionId "6aa1c516-89e6-42db-a92a-9efbd692fbfc" #> `
+  -Scope "/dbs/TestDB/colls/TestContainer" <# scope shall be the same as on the role, otherwise error is out #> `
+  -PrincipalId 0a726c36-7f85-4281-9b46-279b1e9eb331 # my security group
+```
+Response: 
+```powershell
+Id               : /subscriptions/c15ff08c-5669-485a-ae22-300c2f5920ec/resourceGroups/rg-dev-001/providers/Microsoft.DocumentDB/databaseAccounts/test-cosmos-db/sqlRoleAssignments/ba8ea356-3a19-4ad8-b45f-3540f0d501ee
+Scope            : /subscriptions/c15ff08c-5669-485a-ae22-300c2f5920ec/resourceGroups/rg-dev-001/providers/Microsoft.DocumentDB/databaseAccounts/test-cosmos-db/dbs/TestDB/colls/TestContainer
+RoleDefinitionId : /subscriptions/c15ff08c-5669-485a-ae22-300c2f5920ec/resourceGroups/rg-dev-001/providers/Microsoft.DocumentDB/databaseAccounts/test-cosmos-db/sqlRoleDefinitions/6aa1c516-89e6-42db-a92a-9efbd692fbfc
+PrincipalId      : 0a726c36-7f85-4281-9b46-279b1e9eb331
+```
+
+Do the same step for role `Write TestDb/TestContainer` with id `667aef15-cfd8-4c28-ab31-e9bf39cee554`.
+
+Now, after making sure that you are a member of the security group 0a726c36-7f85-4281-9b46-279b1e9eb331, in portal.azure.com try to create items in TestDB/TestContainer and you shall succeed.
 
 
