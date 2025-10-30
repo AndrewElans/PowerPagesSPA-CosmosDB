@@ -1,4 +1,6 @@
-# PowerPagesSPA-CosmosDB
+# Power Pages SPA Azure Cosmos DB
+
+Query Azure Cosmos DB with MSAL token from browser.
 
 ## In portal.azure.com
 ### Provision Azure Cosmos DB
