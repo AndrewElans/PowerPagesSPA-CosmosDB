@@ -1,4 +1,4 @@
-# Power Pages SPA Azure Cosmos DB
+# Power Pages SPA with Azure Cosmos DB
 
 Query Azure Cosmos DB with MSAL token from browser.
 
