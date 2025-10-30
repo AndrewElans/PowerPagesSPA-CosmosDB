@@ -7,7 +7,14 @@
 3) Go to Data Explorer -> make new Database with id `TestDB` -> in this db make a new Container with id `TestContainer` and Partition key `key01`
 
 Note: when Azure Cosmos DB is provisioned, you have the role `Owner`. With this role, you can only CRUD Databases/Containers, but not Items. Trying to add item you get error:
-`Request is blocked because principal [7a723eae-c4d2-48cd-92e5-5545d18bbc61] does not have required RBAC permissions to perform action [Microsoft.DocumentDB/databaseAccounts/readMetadata] on resource [/]`
+
+```
+Request is blocked because principal [7a723eae-c4d2-48cd-92e5-5545d18bbc61] does not have required RBAC permissions to perform action [Microsoft.DocumentDB/databaseAccounts/readMetadata] on resource [/]
+```
+2 access categories exist with Cosmos DB RBAC:
+
+1) **Control plane role-based access** allowing to CRUD of databases and containers. Roles exists in portal under the name 'Cosmos DB Operator'. This role lets you manage Azure Cosmos DB accounts, but not access data in them, prevents access to account keys and connection strings. Owner of the Cosmos DB has such permissions by default.
+2) **Data plane role-based access** allowing to CRUD items within a container. Not provided to the owner, does not exist in the portal. CLI must be used.
   
 ### Add API permissions
 Go to App registrations -> find your Power Pages app and open -> API Permissions -> Add a permission -> select Azure Cosmos DB -> select user_impersonation -> add and grant.
@@ -44,7 +51,10 @@ Run Connect-AzAccount # select your azure account
 #### MacOS
 TBA
 
-### Add roles for your Cosmos DB account
+### Grant data plane role-based access for your Cosmos DB account to user or group
+
+I follow this guide [learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-connect-role-based-access-control](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-connect-role-based-access-control?pivots=azure-powershell#grant-data-plane-role-based-access).
+
 
 
 
