@@ -8,7 +8,7 @@ Query Azure Cosmos DB with MSAL token from browser.
 ### Provision Azure Cosmos DB
 1) Find Azure Cosmos DB -> create new Azure Cosmos DB for NoSQL -> Account name `test-cosmos-db` -> follow other steps -> in Security disable Key-based Authentication -> create
 2) Go to the resource -> find CORS -> add in Allowed Origins `https://your-portal.powerappsportals.com, https://127.0.0.1:5501`
-3) Go to Data Explorer -> make new Database with id `TestDB` -> in this db make a new Container with id `TestContainer` and Partition key `key01`
+3) Go to Data Explorer -> make new Database with id `TestDB` -> in this db make a new Container with id `TestContainer` and Partition key `key02`
 
 Note: when Azure Cosmos DB is provisioned, you have the role `Owner`. With this role, you can only CRUD Databases/Containers, but not Items. Trying to add item you get error:
 
