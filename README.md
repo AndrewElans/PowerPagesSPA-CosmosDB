@@ -55,6 +55,8 @@ TBA
 
 I follow this guide [learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-connect-role-based-access-control](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-connect-role-based-access-control?pivots=azure-powershell#grant-data-plane-role-based-access).
 
+Az PowerShell commands for Azure Cosmos DB [learn.microsoft.com/en-us/powershell/module/az.cosmosdb](https://learn.microsoft.com/en-us/powershell/module/az.cosmosdb/?view=azps-14.5.0#cosmos-db)
+
 #### 1. Get list of all role definitions associated with your Azure Cosmos DB account
 
 Run:
@@ -180,5 +182,61 @@ PrincipalId      : 0a726c36-7f85-4281-9b46-279b1e9eb331
 Do the same step for role `Write TestDb/TestContainer` with id `667aef15-cfd8-4c28-ab31-e9bf39cee554`.
 
 Now, after making sure that you are a member of the security group 0a726c36-7f85-4281-9b46-279b1e9eb331, in portal.azure.com try to create items in TestDB/TestContainer and you shall succeed.
+
+#### Other relevant commands
+
+##### List all active role assignments on your Cosmos DB account
+Run:
+```powershell
+Get-AzCosmosDBSqlRoleAssignment `
+  -ResourceGroupName rg-dev-001 `
+  -AccountName test-cosmos-db
+```
+Response: 
+```powershell
+Id               : /subscriptions/c15ff08c-5669-485a-ae22-300c2f5920ec/resourceGroups/rg-dev-001/providers/Microsoft.DocumentDB/databaseAccounts/test-cosmos-db/sqlRoleAssignmen 
+                   ts/ea55e97d-808f-414d-a5dc-41fcf9fc08f0
+Scope            : /subscriptions/c15ff08c-5669-485a-ae22-300c2f5920ec/resourceGroups/rg-dev-001/providers/Microsoft.DocumentDB/databaseAccounts/test-cosmos-db/dbs/TestDB/coll 
+                   s/TestContainer
+RoleDefinitionId : /subscriptions/c15ff08c-5669-485a-ae22-300c2f5920ec/resourceGroups/rg-dev-001/providers/Microsoft.DocumentDB/databaseAccounts/test-cosmos-db/sqlRoleDefinitio
+                   ns/667aef15-cfd8-4c28-ab31-e9bf39cee554
+PrincipalId      : 0a726c36-7f85-4281-9b46-279b1e9eb331
+
+Id               : /subscriptions/c15ff08c-5669-485a-ae22-300c2f5920ec/resourceGroups/rg-dev-001/providers/Microsoft.DocumentDB/databaseAccounts/test-cosmos-db/sqlRoleAssignmen
+                   ts/ba8ea356-3a19-4ad8-b45f-3540f0d501ee
+Scope            : /subscriptions/c15ff08c-5669-485a-ae22-300c2f5920ec/resourceGroups/rg-dev-001/providers/Microsoft.DocumentDB/databaseAccounts/test-cosmos-db/dbs/TestDB/coll 
+                   s/TestContainer
+RoleDefinitionId : /subscriptions/c15ff08c-5669-485a-ae22-300c2f5920ec/resourceGroups/rg-dev-001/providers/Microsoft.DocumentDB/databaseAccounts/test-cosmos-db/sqlRoleDefinitio 
+                   ns/6aa1c516-89e6-42db-a92a-9efbd692fbfc
+PrincipalId      : 0a726c36-7f85-4281-9b46-279b1e9eb331
+```
+
+##### Remove Role Assignment
+Run:
+```powershell
+Remove-AzCosmosDBSqlRoleAssignment `
+  -AccountName test-cosmos-db `
+  -ResourceGroupName rg-dev-001 `
+  -Id ea55e97d-808f-414d-a5dc-41fcf9fc08f0 <# id of the role assignment. This id will remove role assignment "Write TestDb/TestContainer" from your Cosmos DB account #> `
+  -PassThru # to see result of the operation
+```
+Response: 
+```powershell
+true # if -PassThru is set or nothing
+```
+
+##### Remove Role Definition
+Run:
+```powershell
+Remove-AzCosmosDBSqlRoleDefinition `
+  -ResourceGroupName rg-dev-001 `
+  -AccountName test-cosmos-db `
+  -Id 667aef15-cfd8-4c28-ab31-e9bf39cee554 <# id of the role definition. This id will remove both assignment and role "Write TestDb/TestContainer" from your Cosmos DB #> `
+  -PassThru # to see result of the operation
+```
+Response: 
+```powershell
+true # if -PassThru is set or nothing
+```
 
 
