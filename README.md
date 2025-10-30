@@ -262,7 +262,7 @@ Requesting token with MSAL methods like `acquireTokenSilent`, `acquireTokenPopup
 ```json
 {
     "token_type": "Bearer",
-    "scope": "<https>://test-cosmos-db.documents.azure.com/user_impersonation",
+    "scope": "https://test-cosmos-db.documents.azure.com/user_impersonation",
     "expires_in": 4684,
     "ext_expires_in": 4684,
     "access_token": "eyJ0eXAiOiJKV1...DYL4VxOhiTQ",
