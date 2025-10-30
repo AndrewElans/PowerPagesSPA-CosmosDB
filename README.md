@@ -17,7 +17,7 @@ Request is blocked because principal [7a723eae-c4d2-48cd-92e5-5545d18bbc61] does
 ```
 2 access categories exist with Cosmos DB RBAC:
 
-1) **Control plane role-based access** allowing to CRUD of databases and containers. Roles exists in portal under the name 'Cosmos DB Operator'. This role lets you manage Azure Cosmos DB accounts, but not access data in them, prevents access to account keys and connection strings. Owner of the Cosmos DB has such permissions by default.
+1) **Control plane role-based access** allowing to CRUD databases and containers. Roles exists in portal under the name 'Cosmos DB Operator'. This role lets you manage Azure Cosmos DB accounts, but not access data in them, prevents access to account keys and connection strings. Owner of the Cosmos DB has such permissions by default.
 2) **Data plane role-based access** allowing to CRUD items within a container. Not provided to the owner, does not exist in the portal. CLI must be used.
   
 ### Add API permissions
