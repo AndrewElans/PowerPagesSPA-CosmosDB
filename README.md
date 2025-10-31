@@ -177,6 +177,8 @@ The same can be taken from the url bar when you are in the portal.azure.com -> y
 
 #### 5. Assign roles to a user or group
 
+Assignment works with both Security and M365 Azure Groups. Verified.
+
 I will assign a role to Azure Security Group of my team. This group has id 0a726c36-7f85-4281-9b46-279b1e9eb331
 
 Run:
