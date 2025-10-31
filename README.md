@@ -256,6 +256,46 @@ Response:
 true # if -PassThru is set or nothing
 ```
 
+### Create Security Group for your Cosmos DB admins
+
+One more thing to do is to create a Security Group of Administrators for managing Azure Cosmos DB account and adding yourself as a member of this group. 
+
+If not, trying to connect to the Cosmos DB for example, using [Azure Resources for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azureresourcegroups) with give the following error:
+
+```
+Request for Read DatabaseAccount is blocked because principal [7a723eae-c4d2-48cd-92e5-5545d18bbc61] does not have required RBAC permissions to perform action [Microsoft.DocumentDB/databaseAccounts/readMetadata] on any scope.
+```
+
+Note the wording **any scope**!
+
+For this we will use a BuiltIn Plane Role `Cosmos DB Built-in Data Contributor` with id `00000000-0000-0000-0000-000000000002`.
+
+```powershell
+New-AzCosmosDBSqlRoleAssignment `
+    -AccountName test-cosmos-db `
+    -ResourceGroupName rg-dev-001 `
+    -RoleDefinitionName "Cosmos DB Built-in Data Contributor" `
+    -Scope "/" `
+    -PrincipalId 76a4308c-53a2-4272-8b4d-deaec8d35c50 # objectId of SG-TEST-COSMOS-DB-ADMIN security group
+```
+
+But one important thing to note here: if your security group is just created, it will take some time (15 min, an hour maybe) until it propagates in the account due to synchronization delay between regions.
+
+When geting the token for your Cosmos DB account, you shall see this group in the `groups` array on your JWT token: 
+
+```json
+...
+"groups": [
+    "f29df9e1-6d4d-4b31-b8e2-f3ae7c8a23f5",
+    "0a726c36-7f85-4281-9b46-279b1e9eb331",
+    "76a4308c-53a2-4272-8b4d-deaec8d35c50",
+    "c55ebeab-561c-4ceb-ac76-e5a17f12fa97"
+],
+...
+```
+
+If you need your access quickly, you may run `New-AzCosmosDBSqlRoleAssignment` on your user's objectId and get it immediately.
+
 ### Query Cosmos DB with `fetch` from your portal
 
 [Microsoft Authentication Library for JavaScript (MSAL.js) for Browser-Based Single-Page Applications](https://github.com/AzureAD/microsoft-authentication-library-for-js/tree/dev/lib/msal-browser) is used for authenticating with the Azure tenant and getting access tokens.
