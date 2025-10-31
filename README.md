@@ -28,25 +28,38 @@ Follow steps from [learn.microsoft.com/en-us/powershell/azure/install-azure-powe
 
 #### Windows
 
-Note: If you have Azure extension with Azure PowerShell in VS Code remove AzureRm as they come in conflict. 
+##### AzureRM shall be removed first
 
-Open PowerShell as Administrator and run:
+AzureRM module works with Az commands but is deprecated and may come in comflict with Az PowerShell we need to use. More in [learn.microsoft.com/en-us/powershell/azure/migrate-from-azurerm-to-az](https://learn.microsoft.com/en-us/powershell/azure/migrate-from-azurerm-to-az?view=azps-14.5.0).
+
+Check if you have AzureRM module available in PowerShell:
+
+```powershell
+Get-Module -Name AzureRM -ListAvailable # check if this is installed
+```
+
+If you do, uninstall it in PowerShell as Administrator with:
 ```powershell
 Uninstall-AzureRm
 ```
-Install Azure PowerShell:
+
+##### Note on extension Azure Resources for Visual Studio Code
+
+If you have [Azure Resources for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azureresourcegroups), you will have Terminal extension Azure Cloud Shell (PowerShell) in VS Code. This can work with the commands provided further, however I noticed that active session is extremely short (10-20 minutes). This is very inconvenient as you have to launch it, select active account and wait until it connects. You may likely extend it in settings somewhere but I don't bother...
+
+##### Intstall Azure PowerShell
+
+To install:
 ```powershell
 Install-Module -Name Az -Repository PSGallery -Force -Scope CurrentUser # -AllowClobber
 ```
-Note: add param `-AllowClobber` if error like this is shown:
-```powershell
-<#
+Add param `-AllowClobber` if error like this is shown:
+```
 The following commands are already available on this system:
 'Login-AzAccount,Logout-AzAccount,Send-Feedback'. This module
 'Az.Accounts' may override the existing commands. If you still
 want to install this module 'Az.Accounts', use -AllowClobber
 parameter.
-#>
 ```
 Then run:
 ```powershell
