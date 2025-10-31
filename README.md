@@ -32,7 +32,7 @@ Follow steps from [learn.microsoft.com/en-us/powershell/azure/install-azure-powe
 
 AzureRM module works with Az commands but is deprecated and may come in comflict with Az PowerShell we need to use. More in [learn.microsoft.com/en-us/powershell/azure/migrate-from-azurerm-to-az](https://learn.microsoft.com/en-us/powershell/azure/migrate-from-azurerm-to-az?view=azps-14.5.0).
 
-Check if you have AzureRM module available in PowerShell:
+Check if you have AzureRM module installed in PowerShell:
 
 ```powershell
 Get-Module -Name AzureRM -ListAvailable # check if this is installed
